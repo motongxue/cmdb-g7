@@ -1,0 +1,9 @@
+pkg: github.com/motongxue/cmdb-g7
+name: cmdb-g7
+description: 多云管理
+enable_keyauth: false
+enable_mysql: true
+enable_mongodb: false
+gen_example: true
+http_framework: go-restful
+enable_cache: false
