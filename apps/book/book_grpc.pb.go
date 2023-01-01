@@ -22,6 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ServiceClient interface {
+	// package.struct 定义在外部依赖的引用 demo.book.req.CreateBookRequest -> CreateBookRequest
+	// 引入外部依赖时要通过package来指定，但是如果package前缀部分相同，则可以省略相同前缀
 	CreateBook(ctx context.Context, in *CreateBookRequest, opts ...grpc.CallOption) (*Book, error)
 	QueryBook(ctx context.Context, in *QueryBookRequest, opts ...grpc.CallOption) (*BookSet, error)
 	DescribeBook(ctx context.Context, in *DescribeBookRequest, opts ...grpc.CallOption) (*Book, error)
@@ -86,6 +88,8 @@ func (c *serviceClient) DeleteBook(ctx context.Context, in *DeleteBookRequest, o
 // All implementations must embed UnimplementedServiceServer
 // for forward compatibility
 type ServiceServer interface {
+	// package.struct 定义在外部依赖的引用 demo.book.req.CreateBookRequest -> CreateBookRequest
+	// 引入外部依赖时要通过package来指定，但是如果package前缀部分相同，则可以省略相同前缀
 	CreateBook(context.Context, *CreateBookRequest) (*Book, error)
 	QueryBook(context.Context, *QueryBookRequest) (*BookSet, error)
 	DescribeBook(context.Context, *DescribeBookRequest) (*Book, error)
