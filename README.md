@@ -26,11 +26,11 @@
 │   └── xxx.toml
 ├── apps                            # 具体业务场景的领域包
 │   ├── all
-│   │   |-- grpc.go                # 注册所有GRPC服务模块, 暴露给框架GRPC服务器加载, 注意 导入有先后顺序。  
-│   │   |-- http.go                # 注册所有HTTP服务模块, 暴露给框架HTTP服务器加载。                    
+│   │   |-- impl.go                # 注册所有GRPC服务模块, 暴露给框架GRPC服务器加载, 注意 导入有先后顺序。  
+│   │   |-- api.go                # 注册所有HTTP服务模块, 暴露给框架HTTP服务器加载。                    
 │   │   └── internal.go            #  注册所有内部服务模块, 无须对外暴露的服务, 用于内部依赖。 
 │   ├── book                       # 具体业务场景领域服务 book
-│   │   ├── http                   # http 
+│   │   ├── api                   # http 
 │   │   │    ├── book.go           # book 服务的http方法实现，请求参数处理、权限处理、数据响应等 
 │   │   │    └── http.go           # 领域模块内的 http 路由处理，向系统层注册http服务
 │   │   ├── impl                   # rpc
