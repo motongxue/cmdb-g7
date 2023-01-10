@@ -23,7 +23,7 @@ import (
 
 // startCmd represents the start command
 var serviceCmd = &cobra.Command{
-	Use:   "start",
+	Use:   "start", // 根据Use指定的start跟cmd中的start命令捆绑在一起，从而找到对应的函数
 	Short: "cmdb-g7 API服务",
 	Long:  "cmdb-g7 API服务",
 	RunE: func(cmd *cobra.Command, args []string) error {

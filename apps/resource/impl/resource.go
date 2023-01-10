@@ -3,12 +3,12 @@ package impl
 import (
 	"context"
 	"fmt"
-	"strings"
-	"github.com/motongxue/cmdb-g7/apps/resource"
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/sqlbuilder"
+	"github.com/motongxue/cmdb-g7/apps/resource"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"strings"
 )
 
 func (s *service) Search(ctx context.Context, req *resource.SearchRequest) (
