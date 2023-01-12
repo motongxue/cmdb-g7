@@ -151,6 +151,7 @@ func (s *HostSet) UpdateTag(tags []*resource.Tag) {
 	}
 }
 
+// 使用proto里面自带的Clone方法进行对象复制
 func (s *HostSet) Clone() *HostSet {
 	return proto.Clone(s).(*HostSet)
 }

@@ -2,6 +2,7 @@ package cvm_test
 
 import (
 	"context"
+	"github.com/motongxue/cmdb-g7/apps/host"
 	"github.com/motongxue/cmdb-g7/provider/txyun/connectivity"
 	"github.com/motongxue/cmdb-g7/provider/txyun/cvm"
 	"testing"
@@ -28,6 +29,17 @@ func TestQuery(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Log(set)
+}
+
+func TestPaggerQuery(t *testing.T) {
+	p := cvm.NewPagger(op)
+	for p.Next() {
+		set := host.NewHostSet()
+		if err := p.Scan(context.Background(), set); err != nil {
+			panic(err)
+		}
+		t.Log("page query result: ", set)
+	}
 }
 
 func init() {
