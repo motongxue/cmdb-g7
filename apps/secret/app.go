@@ -1,7 +1,10 @@
 package secret
 
 import (
+	"encoding/base64"
 	"fmt"
+	"github.com/infraboard/mcube/crypto/cbc"
+	"github.com/motongxue/cmdb-g7/conf"
 	"net/http"
 	"strings"
 	"time"
@@ -97,5 +100,47 @@ func (s *CreateSecretRequest) AllowRegionString() string {
 func (s *CreateSecretRequest) LoadAllowRegionFromString(regions string) {
 	if regions != "" {
 		s.AllowRegions = strings.Split(regions, ",")
+	}
+}
+
+func (s *CreateSecretRequest) EncryptAPISecret(key string) error {
+	// 判断文本是否已经加密
+	if strings.HasPrefix(s.ApiSecret, conf.CIPHER_TEXT_PREFIX) {
+		return fmt.Errorf("text has ciphered")
+	}
+	// 由于需要解密，所以采用对称加密算法进行加密
+	cipherText, err := cbc.Encrypt([]byte(s.ApiSecret), []byte(key))
+	if err != nil {
+		return err
+	}
+	// TODO 为什么需要使用base64编码
+	// Base64是常见传输8bit数据的编码方式
+	// Base64编码的作用：由于某些系统中只能使用ASCII字符。Base64就是用来将非ASCII字符的数据转换成ASCII字符的一种方法。
+	base64Str := base64.StdEncoding.EncodeToString(cipherText)
+	s.ApiSecret = fmt.Sprintf("%s%s", conf.CIPHER_TEXT_PREFIX, base64Str)
+	return nil
+}
+
+func (s *CreateSecretRequest) DecryptAPISecret(key string) error {
+	// 如果文本已经是明文
+	if !strings.HasPrefix(s.ApiSecret, conf.CIPHER_TEXT_PREFIX) {
+		return fmt.Errorf("text is plan text")
+	}
+	// 获取base64文本
+	base64CipherText := strings.TrimPrefix(s.ApiSecret, conf.CIPHER_TEXT_PREFIX)
+	// 将base64文本利用cbc算法解密
+	planText, err := cbc.Decrypt([]byte(base64CipherText), []byte(key))
+	if err != nil {
+		return err
+	}
+	// 将[]byte转为string
+	s.ApiSecret = string(planText)
+	return nil
+}
+
+// 敏感数据脱敏
+func (s *CreateSecretRequest) Desense() {
+	if s.ApiSecret != "" {
+		s.ApiSecret = "******"
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"github.com/motongxue/cmdb-g7/apps/secret"
+	"github.com/motongxue/cmdb-g7/conf"
 
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/sqlbuilder"
@@ -22,10 +23,10 @@ func (s *impl) CreateSecret(ctx context.Context, req *secret.CreateSecretRequest
 	}
 	defer stmt.Close()
 
-	// TODO: 入库之前先加密
-	// if err := ins.Data.EncryptAPISecret(conf.C().App.EncryptKey); err != nil {
-	// 	s.log.Warnf("encrypt api key error, %s", err)
-	// }
+	// 入库之前先加密
+	if err := ins.Data.EncryptAPISecret(conf.C().App.EncryptKey); err != nil {
+		s.log.Warnf("encrypt api key error, %s", err)
+	}
 
 	_, err = stmt.ExecContext(ctx,
 		ins.Id, ins.CreateAt, ins.Data.Description, ins.Data.Vendor, ins.Data.Address,
@@ -78,7 +79,7 @@ func (s *impl) QuerySecret(ctx context.Context, req *secret.QuerySecretRequest) 
 			return nil, exception.NewInternalServerError("query secret error, %s", err.Error())
 		}
 		ins.Data.LoadAllowRegionFromString(allowRegions)
-		// TODO: ins.Data.Desense()
+		ins.Data.Desense()
 		set.Add(ins)
 	}
 

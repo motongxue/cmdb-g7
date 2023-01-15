@@ -42,10 +42,12 @@ func (s *impl) Name() string {
 	return secret.AppName
 }
 
+// 需要提前注册到grpc server中
 func (s *impl) Registry(server *grpc.Server) {
 	secret.RegisterServiceServer(server, svr)
 }
 
+// 将该rpc应用注册到ioc容器中
 func init() {
 	app.RegistryGrpcApp(svr)
 }

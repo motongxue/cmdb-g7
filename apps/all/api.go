@@ -5,4 +5,5 @@ import (
 	_ "github.com/motongxue/cmdb-g7/apps/book/api"
 	_ "github.com/motongxue/cmdb-g7/apps/host/api"
 	_ "github.com/motongxue/cmdb-g7/apps/resource/api"
+	_ "github.com/motongxue/cmdb-g7/apps/secret/api"
 )
