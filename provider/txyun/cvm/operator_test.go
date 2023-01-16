@@ -32,7 +32,7 @@ func TestQuery(t *testing.T) {
 }
 
 func TestPaggerQuery(t *testing.T) {
-	p := cvm.NewPagger(op)
+	p := cvm.NewPagger(5, op)
 	for p.Next() {
 		set := host.NewHostSet()
 		if err := p.Scan(context.Background(), set); err != nil {

@@ -3,23 +3,21 @@ package cvm
 import (
 	"context"
 	"github.com/infraboard/mcube/flowcontrol/tokenbucket"
-	"github.com/motongxue/cmdb-g7/apps/host"
-	"time"
-
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
+	"github.com/motongxue/cmdb-g7/apps/host"
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
 	tx_cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
 )
 
-func NewPagger(op *CVMOperator) host.Pagger {
+func NewPagger(rate float64, op *CVMOperator) host.Pagger {
 	p := &pagger{
 		op:         op,
 		hasNext:    true,
 		pageNumber: 1,
 		pageSize:   20,
 		log:        zap.L().Named("CVM"),
-		tb:         tokenbucket.NewBucket(1*time.Second, 3),
+		tb:         tokenbucket.NewBucketWithRate(rate, 3),
 	}
 
 	p.req = tx_cvm.NewDescribeInstancesRequest()
