@@ -71,7 +71,7 @@ message CreateTaskRequst {
   // 额外的一些参数
   // @gotags: json:"params"
   map<string, string> params = 6;
-  // 任务执行的超时时间
+  // 任务执行的超时时间，单位是秒
   // @gotags: json:"timeout"
   int64 timeout = 7;
 }

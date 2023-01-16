@@ -13,6 +13,11 @@ func (h *handler) CreatTask(r *restful.Request, w *restful.Response) {
 		response.Failed(w, err)
 		return
 	}
+	// 直接启动一个goroutine 来执行,
+	// 想要通过Task做异常, 这里需要改造, 支持传递Task Id 参数
+	// go func() {
+	// 	set, err := h.task.CreateTask(r.Request.Context(), req)
+	// }()
 
 	set, err := h.task.CreateTask(r.Request.Context(), req)
 	if err != nil {

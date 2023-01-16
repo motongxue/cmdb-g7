@@ -1,6 +1,7 @@
 package task
 
 import (
+	"github.com/rs/xid"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -17,6 +18,8 @@ var (
 func NewCreateTaskRequst() *CreateTaskRequst {
 	return &CreateTaskRequst{
 		Params: map[string]string{},
+		// 默认半小时的超市时间
+		Timeout: 30 * 60,
 	}
 }
 
@@ -31,6 +34,7 @@ func CreateTask(req *CreateTaskRequst) (*Task, error) {
 
 	ins := NewDefaultTask()
 	ins.Data = req
+	ins.Id = xid.New().String()
 
 	return ins, nil
 }
