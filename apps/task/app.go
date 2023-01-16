@@ -24,6 +24,17 @@ func (req *CreateTaskRequst) Validate() error {
 	return validate.Struct(req)
 }
 
+func CreateTask(req *CreateTaskRequst) (*Task, error) {
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+
+	ins := NewDefaultTask()
+	ins.Data = req
+
+	return ins, nil
+}
+
 func NewDefaultTask() *Task {
 	return &Task{
 		Data:   &CreateTaskRequst{},
@@ -40,4 +51,9 @@ func (s *Task) Failed(message string) {
 	s.Status.EndAt = time.Now().UnixMilli()
 	s.Status.Stage = Stage_FAILED
 	s.Status.Message = message
+}
+
+func (s *Task) Success() {
+	s.Status.EndAt = time.Now().UnixMilli()
+	s.Status.Stage = Stage_SUCCESS
 }

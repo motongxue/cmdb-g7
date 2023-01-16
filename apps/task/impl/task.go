@@ -17,15 +17,25 @@ import (
 )
 
 func (i *impl) CreateTask(ctx context.Context, req *task.CreateTaskRequst) (*task.Task, error) {
+
+	// 创建Task实例
+	t, err := task.CreateTask(req)
+	if err != nil {
+		return nil, err
+	}
+
 	// 1. 查询secret
 	s, err := i.secret.DescribeSecret(ctx, secret.NewDescribeSecretRequest(req.SecretId))
 	if err != nil {
 		return nil, err
 	}
+	t.SecretDescription = s.Data.Description
 	// 解密api secret
 	if err := s.Data.DecryptAPISecret(conf.C().App.EncryptKey); err != nil {
 		return nil, err
 	}
+	// 需要把Task 标记为Running, 修改一下Task对象的状态
+	t.Run()
 	// 分类参数类型
 	switch req.Type {
 	// 资源同步
@@ -72,7 +82,8 @@ func (i *impl) CreateTask(ctx context.Context, req *task.CreateTaskRequst) (*tas
 	default:
 		return nil, fmt.Errorf("unkown task type: %s", req.Type)
 	}
-	return nil, nil
+	t.Success()
+	return t, nil
 }
 func (i *impl) QueryBook(ctx context.Context, req *task.QueryTaskRequest) (*task.TaskSet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryBook not implemented")
