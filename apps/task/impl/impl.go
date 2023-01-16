@@ -32,6 +32,7 @@ func (s *impl) Config() error {
 	}
 	s.db = db
 	s.log = zap.L().Named(s.Name())
+	// 通过mock 来解耦以来 s.secret = &secretMock{}
 	s.secret = app.GetGrpcApp(secret.AppName).(secret.ServiceServer)
 	s.host = app.GetGrpcApp(host.AppName).(host.ServiceServer)
 	return nil
