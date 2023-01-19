@@ -43,6 +43,10 @@ func (p *pagger) SetPageSize(ps int64) {
 	p.pageSize = ps
 }
 
+func (p *pagger) SetRate(r float64) {
+	p.tb.SetRate(r)
+}
+
 // 根据分页参数来计算
 func (p *pagger) offset() *int64 {
 	offSet := (p.pageNumber - 1) * p.pageSize
@@ -71,7 +75,10 @@ func (p *pagger) Scan(ctx context.Context, set *host.HostSet) error {
 		return err
 	}
 	// 把查询出来的数据赋值给set
-	*set = *hs.Clone()
+	// *set = *hs.Clone()
+	for i := range hs.Items {
+		set.Add(set.Items[i])
+	}
 
 	// 可以根据当前一页是满页来决定是否有下一页
 	if hs.Length() < p.pageSize {

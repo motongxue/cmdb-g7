@@ -31,6 +31,18 @@ func TestQuery(t *testing.T) {
 	t.Log(set)
 }
 
+func TestPagerV2Query(t *testing.T) {
+	p := cvm.NewPagerV2(op)
+
+	for p.Next() {
+		set := host.NewHostSet()
+		if err := p.Scan(context.Background(), set); err != nil {
+			panic(err)
+		}
+		t.Log("page query result: ", set)
+	}
+}
+
 func TestPaggerQuery(t *testing.T) {
 	p := cvm.NewPagger(5, op)
 	for p.Next() {
