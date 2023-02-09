@@ -15,7 +15,7 @@ require (
 	github.com/infraboard/keyauth v0.8.1
 	github.com/infraboard/mcenter v0.0.5
 	github.com/infraboard/mcube v1.9.6
-	github.com/motongxue/keyauth-g7 v0.0.1
+	github.com/motongxue/keyauth-g7 v0.0.3
 	github.com/rs/xid v1.4.0
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
