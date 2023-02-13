@@ -287,7 +287,7 @@ type CreateTaskRequst struct {
 	// 额外的一些参数
 	// @gotags: json:"params"
 	Params map[string]string `protobuf:"bytes,6,rep,name=params,proto3" json:"params" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	// 任务执行的超时时间
+	// 任务执行的超时时间，单位是秒
 	// @gotags: json:"timeout"
 	Timeout int64 `protobuf:"varint,7,opt,name=timeout,proto3" json:"timeout"`
 }

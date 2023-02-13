@@ -3,8 +3,10 @@ package api
 
 import (
 	"github.com/emicklei/go-restful/v3"
+	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 	"github.com/motongxue/cmdb-g7/apps/secret"
+	"github.com/motongxue/keyauth-g7/apps/token"
 )
 
 func (h *handler) QuerySecret(r *restful.Request, w *restful.Response) {
@@ -19,6 +21,14 @@ func (h *handler) QuerySecret(r *restful.Request, w *restful.Response) {
 }
 func (h *handler) CreateSecret(r *restful.Request, w *restful.Response) {
 	req := secret.NewCreateSecretRequest()
+
+	if err := request.GetDataFromRequest(r.Request, req); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	//  确保身份任务已经开启
+	req.CreateBy = r.Attribute("token").(*token.Token).Data.UserName
 	ins, err := h.service.CreateSecret(r.Request.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
