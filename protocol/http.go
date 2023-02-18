@@ -89,6 +89,12 @@ func (s *HTTPService) Start() error {
 	s.r.Add(restfulspec.NewOpenAPIService(config))
 	s.l.Infof("Get the API using http://%s%s", s.c.App.HTTP.Addr(), config.APIPath)
 
+	// 此时所有的webservice已经加载完成
+	if err := s.Registry(); err != nil {
+		// 注册流程不影响启动流程，不retrun
+		s.l.Errorf("registry failed, %s", err)
+	}
+
 	// 启动 HTTP服务
 	s.l.Infof("HTTP服务启动成功, 监听地址: %s", s.server.Addr)
 	if err := s.server.ListenAndServe(); err != nil {
