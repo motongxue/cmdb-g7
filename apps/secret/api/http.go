@@ -45,10 +45,13 @@ func (h *handler) Registry(ws *restful.WebService) {
         Metadata(label.Action, label.Create.Value()).
         Metadata(label.Auth, label.Enable).
         Metadata(label.Permission, label.Enable).
-        // 基于用户属性的权限装饰
+        // 开启行为审计
+        Metadata(label.Audit, label.Enable).
+        // 基于用户属性的权限装饰, 未实现
         Metadata(label.Allow, "admin").
         Reads(secret.CreateSecretRequest{}).
         Writes(response.NewData(secret.Secret{})))
+
     // Route /cmdb/api/v1/book/ --> h.CreateBook
     // 需要装饰路由:   Route Path 不需要认证
     ws.Route(ws.GET("/").To(h.QuerySecret).
@@ -61,6 +64,7 @@ func (h *handler) Registry(ws *restful.WebService) {
         Metadata(label.Auth, label.Enable).
         // 是否开启鉴权
         Metadata(label.Permission, label.Enable).
+        Metadata(label.Audit, label.Enable).
         Reads(secret.QuerySecretRequest{}).
         Writes(response.NewData(secret.SecretSet{})).
         Returns(200, "OK", secret.SecretSet{}))
@@ -73,6 +77,7 @@ func (h *handler) Registry(ws *restful.WebService) {
         Metadata(label.Action, label.Get.Value()).
         Metadata(label.Auth, label.Enable).
         Metadata(label.Permission, label.Enable).
+        Metadata(label.Audit, label.Enable).
         Writes(response.NewData(secret.Secret{})).
         Returns(200, "OK", response.NewData(secret.Secret{})).
         Returns(404, "Not Found", nil))
@@ -85,6 +90,7 @@ func (h *handler) Registry(ws *restful.WebService) {
         Metadata(label.Action, label.Delete.Value()).
         Metadata(label.Auth, label.Enable).
         Metadata(label.Permission, label.Enable).
+        Metadata(label.Audit, label.Enable).
         Param(ws.PathParameter("id", "identifier of the secret").DataType("string")))
 }
 
