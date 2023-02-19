@@ -58,7 +58,7 @@ func (h *handler) Registry(ws *restful.WebService) {
         Metadata(label.Resource, h.Name()).
         Metadata(label.Action, label.List.Value()).
         // 是否开启认证
-        Metadata(label.Auth, label.Disable).
+        Metadata(label.Auth, label.Enable).
         // 是否开启鉴权
         Metadata(label.Permission, label.Enable).
         Reads(secret.QuerySecretRequest{}).

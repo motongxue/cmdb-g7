@@ -41,7 +41,7 @@ func NewHTTPService() *HTTPService {
     if err != nil {
         panic(err)
     }
-    auther := keyauth_auth.NewKeyauthAuther(keyauthClient.Token())
+    auther := keyauth_auth.NewKeyauthAuther(keyauthClient, "cmdb")
     fmt.Println(auther)
     r.Filter(auther.RestfulAuthHandlerFunc)
     server := &http.Server{
@@ -133,11 +133,13 @@ func (s *HTTPService) Registry() error {
         routes := registeredWebServices[i].Routes()
         for _, r := range routes {
             var resource, action string
-            if v, ok := r.Metadata[label.Resource]; ok {
-                resource, _ = v.(string)
-            }
-            if v, ok := r.Metadata[label.Action]; ok {
-                action, _ = v.(string)
+            if r.Metadata != nil {
+                if v, ok := r.Metadata[label.Resource]; ok {
+                    resource, _ = v.(string)
+                }
+                if v, ok := r.Metadata[label.Action]; ok {
+                    action, _ = v.(string)
+                }
             }
             endpoints.Endpoints = append(endpoints.Endpoints, &endpoint.Endpoint{
                 Resource: resource,
