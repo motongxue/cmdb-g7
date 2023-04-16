@@ -128,8 +128,13 @@ func (s *CreateSecretRequest) DecryptAPISecret(key string) error {
 	}
 	// 获取base64文本
 	base64CipherText := strings.TrimPrefix(s.ApiSecret, conf.CIPHER_TEXT_PREFIX)
+	// 转为Base64编码
+	cipherText, err := base64.StdEncoding.DecodeString(base64CipherText)
+	if err != nil {
+		return err
+	}
 	// 将base64文本利用cbc算法解密
-	planText, err := cbc.Decrypt([]byte(base64CipherText), []byte(key))
+	planText, err := cbc.Decrypt([]byte(cipherText), []byte(key))
 	if err != nil {
 		return err
 	}
