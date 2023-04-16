@@ -33,9 +33,9 @@ func LoadClientFromEnv() error {
 // NewTencentCloudClient client
 func NewTencentCloudClient(secretID, secretKey, region string) *TencentCloudClient {
 	return &TencentCloudClient{
-		Region:    region,
 		SecretID:  secretID,
 		SecretKey: secretKey,
+		Region:    region,
 	}
 }
 

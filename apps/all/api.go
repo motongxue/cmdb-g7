@@ -8,5 +8,3 @@ import (
     _ "github.com/motongxue/cmdb-g7/apps/secret/api"
     _ "github.com/motongxue/cmdb-g7/apps/task/api"
 )
-
-// TODO 待添加各个模块的readme、以及mcenter为v0.0.5版本！
