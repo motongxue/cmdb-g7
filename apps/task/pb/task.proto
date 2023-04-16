@@ -8,8 +8,8 @@ import "github.com/infraboard/mcube/pb/page/page.proto";
 
 service Service {
   rpc CreateTask(CreateTaskRequst) returns(Task);
-  rpc QueryBook(QueryTaskRequest) returns(TaskSet);
-  rpc DescribeBook(DescribeTaskRequest) returns(Task);
+  rpc QueryTask(QueryTaskRequest) returns(TaskSet);
+  rpc DescribeTask(DescribeTaskRequest) returns(Task);
 }
 
 // 任务类型

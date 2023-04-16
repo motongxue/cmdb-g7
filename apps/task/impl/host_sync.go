@@ -50,7 +50,6 @@ func (i *impl) syncHost(ctx context.Context, req *syncHostReqeust) {
 		req.task.Data.Region)
 
 	cvmOp := cvm.NewCVMOperator(txConn.CvmClient())
-	fmt.Println(cvmOp)
 	// 因为要同步所有资源，需要分页查询
 	pagger := cvm.NewPagger(float64(req.secret.Data.RequestRate), cvmOp)
 	for pagger.Next() {

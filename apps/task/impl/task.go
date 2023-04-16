@@ -71,7 +71,6 @@ func (i *impl) CreateTask(ctx context.Context, req *task.CreateTaskRequst) (*tas
 				// ctx 是不是传递Http 的ctx
 				taskExecCtx, cancel := context.WithTimeout(context.Background(), time.Duration(req.Timeout)*time.Second)
 				taskCancel = cancel
-
 				go i.syncHost(taskExecCtx, newSyncHostRequst(s, t))
 			case resource.Type_RDS:
 			case resource.Type_BILL:
@@ -99,9 +98,9 @@ func (i *impl) CreateTask(ctx context.Context, req *task.CreateTaskRequst) (*tas
 	}
 	return t, nil
 }
-func (i *impl) QueryBook(ctx context.Context, req *task.QueryTaskRequest) (*task.TaskSet, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method QueryBook not implemented")
+func (i *impl) QueryTask(ctx context.Context, req *task.QueryTaskRequest) (*task.TaskSet, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryTask not implemented")
 }
-func (i *impl) DescribeBook(ctx context.Context, req *task.DescribeTaskRequest) (*task.Task, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DescribeBook not implemented")
+func (i *impl) DescribeTask(ctx context.Context, req *task.DescribeTaskRequest) (*task.Task, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeTask not implemented")
 }

@@ -1,172 +1,172 @@
 package host
 
 import (
-    context "context"
-    "fmt"
-    "github.com/go-playground/validator/v10"
-    "github.com/infraboard/mcube/flowcontrol/tokenbucket"
-    "github.com/infraboard/mcube/http/request"
-    pb_request "github.com/infraboard/mcube/pb/request"
-    "github.com/motongxue/cmdb-g7/apps/resource"
-    "github.com/motongxue/cmdb-g7/utils"
-    "google.golang.org/protobuf/proto"
-    "net/http"
-    "strings"
-    "time"
+	context "context"
+	"fmt"
+	"github.com/go-playground/validator/v10"
+	"github.com/infraboard/mcube/flowcontrol/tokenbucket"
+	"github.com/infraboard/mcube/http/request"
+	pb_request "github.com/infraboard/mcube/pb/request"
+	"github.com/motongxue/cmdb-g7/apps/resource"
+	"github.com/motongxue/cmdb-g7/utils"
+	"google.golang.org/protobuf/proto"
+	"net/http"
+	"strings"
+	"time"
 )
 
 const (
-    AppName = "host"
+	AppName = "host"
 )
 
 // use a single instance of Validate, it caches struct info
 var (
-    validate = validator.New()
+	validate = validator.New()
 )
 
 func NewDefaultHost() *Host {
-    return &Host{
-        Base: &resource.Base{
-            ResourceType: resource.Type_HOST,
-        },
-        Information: &resource.Information{},
-        Describe:    &Describe{},
-    }
+	return &Host{
+		Base: &resource.Base{
+			ResourceType: resource.Type_HOST,
+		},
+		Information: &resource.Information{},
+		Describe:    &Describe{},
+	}
 }
 
 func (h *Host) GenHash() error {
-    // hash resource
-    h.Base.ResourceHash = h.Information.Hash()
-    // hash describe
-    h.Base.DescribeHash = utils.Hash(h.Describe)
-    return nil
+	// hash resource
+	h.Base.ResourceHash = h.Information.Hash()
+	// hash describe
+	h.Base.DescribeHash = utils.Hash(h.Describe)
+	return nil
 }
 
 func (d *Describe) KeyPairNameToString() string {
-    return strings.Join(d.KeyPairName, ",")
+	return strings.Join(d.KeyPairName, ",")
 }
 
 func (d *Describe) SecurityGroupsToString() string {
-    return strings.Join(d.SecurityGroups, ",")
+	return strings.Join(d.SecurityGroups, ",")
 }
 
 func (d *Describe) LoadKeyPairNameString(s string) {
-    if s != "" {
-        d.KeyPairName = strings.Split(s, ",")
-    }
+	if s != "" {
+		d.KeyPairName = strings.Split(s, ",")
+	}
 }
 
 func (d *Describe) LoadSecurityGroupsString(s string) {
-    if s != "" {
-        d.SecurityGroups = strings.Split(s, ",")
-    }
+	if s != "" {
+		d.SecurityGroups = strings.Split(s, ",")
+	}
 }
 
 func (req *DescribeHostRequest) Where() (string, interface{}) {
-    switch req.DescribeBy {
-    default:
-        return "r.id = ?", req.Value
-    }
+	switch req.DescribeBy {
+	default:
+		return "r.id = ?", req.Value
+	}
 }
 
 func NewDescribeHostRequestWithID(id string) *DescribeHostRequest {
-    return &DescribeHostRequest{
-        DescribeBy: DescribeBy_HOST_ID,
-        Value:      id,
-    }
+	return &DescribeHostRequest{
+		DescribeBy: DescribeBy_HOST_ID,
+		Value:      id,
+	}
 }
 
 func NewDeleteHostRequestWithID(id string) *ReleaseHostRequest {
-    return &ReleaseHostRequest{Id: id}
+	return &ReleaseHostRequest{Id: id}
 }
 
 func NewUpdateHostRequest(id string) *UpdateHostRequest {
-    return &UpdateHostRequest{
-        Id:             id,
-        UpdateMode:     pb_request.UpdateMode_PUT,
-        UpdateHostData: &UpdateHostData{},
-    }
+	return &UpdateHostRequest{
+		Id:             id,
+		UpdateMode:     pb_request.UpdateMode_PUT,
+		UpdateHostData: &UpdateHostData{},
+	}
 }
 
 func (req *UpdateHostRequest) Validate() error {
-    return validate.Struct(req)
+	return validate.Struct(req)
 }
 
 func (h *Host) Put(req *UpdateHostData) {
-    oldRH, oldDH := h.Base.ResourceHash, h.Base.DescribeHash
+	oldRH, oldDH := h.Base.ResourceHash, h.Base.DescribeHash
 
-    h.Information = req.Information
-    h.Describe = req.Describe
-    h.Information.UpdateAt = time.Now().UnixMilli()
-    // 对新的ResourceHash、DescribeHash取哈希，用于判断是否需要更新
-    // 因为将host对象拆分成了Resource和Describe信息，所以不一定都需要更改，所以才这样用哈希的形式
-    h.GenHash()
+	h.Information = req.Information
+	h.Describe = req.Describe
+	h.Information.UpdateAt = time.Now().UnixMilli()
+	// 对新的ResourceHash、DescribeHash取哈希，用于判断是否需要更新
+	// 因为将host对象拆分成了Resource和Describe信息，所以不一定都需要更改，所以才这样用哈希的形式
+	h.GenHash()
 
-    if h.Base.ResourceHash != oldRH {
-        h.Base.ResourceHashChanged = true
-    }
-    if h.Base.DescribeHash != oldDH {
-        h.Base.DescribeHashChanged = true
-    }
+	if h.Base.ResourceHash != oldRH {
+		h.Base.ResourceHashChanged = true
+	}
+	if h.Base.DescribeHash != oldDH {
+		h.Base.DescribeHashChanged = true
+	}
 }
 
 func (h *Host) ShortDesc() string {
-    return fmt.Sprintf("%s %s", h.Information.Name, h.Information.PrivateIp)
+	return fmt.Sprintf("%s %s", h.Information.Name, h.Information.PrivateIp)
 }
 
 func NewUpdateHostDataByIns(ins *Host) *UpdateHostData {
-    return &UpdateHostData{
-        Information: ins.Information,
-        Describe:    ins.Describe,
-    }
+	return &UpdateHostData{
+		Information: ins.Information,
+		Describe:    ins.Describe,
+	}
 }
 
 func NewHostSet() *HostSet {
-    return &HostSet{
-        Items: []*Host{},
-    }
+	return &HostSet{
+		Items: []*Host{},
+	}
 }
 
 func (s *HostSet) Add(item any) {
-    s.Items = append(s.Items, item.(*Host))
-    return
+	s.Items = append(s.Items, item.(*Host))
+	return
 }
 
 func (s *HostSet) Length() int64 {
-    return int64(len(s.Items))
+	return int64(len(s.Items))
 }
 
 func (s *HostSet) ResourceIds() (ids []string) {
-    for i := range s.Items {
-        ids = append(ids, s.Items[i].Base.Id)
-    }
-    return
+	for i := range s.Items {
+		ids = append(ids, s.Items[i].Base.Id)
+	}
+	return
 }
 
 func (s *HostSet) UpdateTag(tags []*resource.Tag) {
-    for i := range tags {
-        for j := range s.Items {
-            if s.Items[j].Base.Id == tags[i].ResourceId {
-                s.Items[j].Information.AddTag(tags[i])
-            }
-        }
-    }
+	for i := range tags {
+		for j := range s.Items {
+			if s.Items[j].Base.Id == tags[i].ResourceId {
+				s.Items[j].Information.AddTag(tags[i])
+			}
+		}
+	}
 }
 
 // 使用proto里面自带的Clone方法进行对象复制
 func (s *HostSet) Clone() *HostSet {
-    return proto.Clone(s).(*HostSet)
+	return proto.Clone(s).(*HostSet)
 }
 
 func NewQueryHostRequestFromHTTP(r *http.Request) *QueryHostRequest {
-    qs := r.URL.Query()
-    page := request.NewPageRequestFromHTTP(r)
-    kw := qs.Get("keywords")
+	qs := r.URL.Query()
+	page := request.NewPageRequestFromHTTP(r)
+	kw := qs.Get("keywords")
 
-    return &QueryHostRequest{
-        Page:     page,
-        Keywords: kw,
-    }
+	return &QueryHostRequest{
+		Page:     page,
+		Keywords: kw,
+	}
 }
 
 // 分页器
@@ -177,9 +177,9 @@ func NewQueryHostRequestFromHTTP(r *http.Request) *QueryHostRequest {
 //		}
 //	}
 type Pagger interface {
-    Next() bool
-    SetPageSize(ps int64)
-    Scan(context.Context, *HostSet) error
+	Next() bool
+	SetPageSize(ps int64)
+	Scan(context.Context, *HostSet) error
 }
 
 // RDS ...
@@ -188,76 +188,76 @@ type Pagger interface {
 // 抽象通用Pager
 
 type Set interface {
-    // 往Set里面添加元素, 任何类型都可以
-    Add(any)
-    // 当前的集合里面有多个元素
-    Length() int64
+	// 往Set里面添加元素, 任何类型都可以
+	Add(any)
+	// 当前的集合里面有多个元素
+	Length() int64
 }
 
 type PagerV2 interface {
-    Next() bool
-    Scan(context.Context, Set) error
-    Offset() int64
-    SetPageSize(ps int64)
-    SetRate(r float64)
-    PageSize() int64
-    PageNumber() int64
+	Next() bool
+	Scan(context.Context, Set) error
+	Offset() int64
+	SetPageSize(ps int64)
+	SetRate(r float64)
+	PageSize() int64
+	PageNumber() int64
 }
 
 func NewBasePagerV2() *BasePagerV2 {
-    return &BasePagerV2{
-        hasNext:    true,
-        tb:         tokenbucket.NewBucketWithRate(1, 1),
-        pageNumber: 1,
-        pageSize:   20,
-    }
+	return &BasePagerV2{
+		hasNext:    true,
+		tb:         tokenbucket.NewBucketWithRate(1, 1),
+		pageNumber: 1,
+		pageSize:   20,
+	}
 }
 
 // 面向组合, 用他来实现一个模板, 除了Scan的其他方法都实现
 
 type BasePagerV2 struct {
-    // 令牌桶
-    hasNext bool
-    tb      *tokenbucket.Bucket
+	// 令牌桶
+	hasNext bool
+	tb      *tokenbucket.Bucket
 
-    // 控制分页的核心参数
-    pageNumber int64
-    pageSize   int64
+	// 控制分页的核心参数
+	pageNumber int64
+	pageSize   int64
 }
 
 func (p *BasePagerV2) Next() bool {
-    // 等待分配令牌
-    p.tb.Wait(1)
+	// 等待分配令牌
+	p.tb.Wait(1)
 
-    return p.hasNext
+	return p.hasNext
 }
 
 func (p *BasePagerV2) Offset() int64 {
-    return (p.pageNumber - 1) * p.pageSize
+	return (p.pageNumber - 1) * p.pageSize
 }
 
 func (p *BasePagerV2) SetPageSize(ps int64) {
-    p.pageSize = ps
+	p.pageSize = ps
 }
 
 func (p *BasePagerV2) PageSize() int64 {
-    return p.pageSize
+	return p.pageSize
 }
 
 func (p *BasePagerV2) PageNumber() int64 {
-    return p.pageNumber
+	return p.pageNumber
 }
 
 func (p *BasePagerV2) SetRate(r float64) {
-    p.tb.SetRate(r)
+	p.tb.SetRate(r)
 }
 
 func (p *BasePagerV2) CheckHasNext(current int64) {
-    // 可以根据当前一页是满页来决定是否有下一页
-    if current < p.pageSize {
-        p.hasNext = false
-    } else {
-        // 直接调整指针到下一页
-        p.pageNumber++
-    }
+	// 可以根据当前一页是满页来决定是否有下一页
+	if current < p.pageSize {
+		p.hasNext = false
+	} else {
+		// 直接调整指针到下一页
+		p.pageNumber++
+	}
 }
