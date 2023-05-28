@@ -1,0 +1,32 @@
+[app]
+name = "cmdb"
+key = "this is your app key"
+encrypt_key = "encrypt_key"
+
+[app.http]
+host = "127.0.0.1"
+port = "8070"
+
+[app.grpc]
+host = "127.0.0.1"
+port = "18070"
+
+# 配置mysql
+[mysql]
+host = 127.0.0.1"
+port = "3306"
+database = "cmdb"
+username = "root"
+password = "123456"
+
+[log]
+level = "debug"
+path = "logs"
+format = "text"
+to = "stdout"
+
+# 去mcenter中查看cmdb的client_id和client_secret
+[mcenter]
+address = "127.0.0.1:18010"
+client_id = "VizGQkEJHQY1472C8ZYLr5Jp"
+client_secret = "cqhDxFtMoQSgXrBOqAiZO5X2rj7I1CFS"
