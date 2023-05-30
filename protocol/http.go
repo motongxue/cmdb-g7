@@ -43,6 +43,7 @@ func NewHTTPService() *HTTPService {
 	}
 	auther := keyauth_auth.NewKeyauthAuther(keyauthClient, "cmdb")
 	fmt.Println(auther)
+	// 通过使用keyauth提供的中间件实现认证服务
 	r.Filter(auther.RestfulAuthHandlerFunc)
 	server := &http.Server{
 		ReadHeaderTimeout: 60 * time.Second,
